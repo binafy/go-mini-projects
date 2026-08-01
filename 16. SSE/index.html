@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>SSE Demo</title>
+        <style>
+            :root { color-scheme: light dark; }
+            body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 2rem auto; padding: 0 1rem; }
+            h1 { font-size: 1.25rem; }
+            #status { font-size: .875rem; color: gray; }
+            #list { list-style: none; padding: 0; }
+            #list li { padding: .25rem .5rem; border-bottom: 1px solid rgba(128,128,128,.25); font-variant-numeric: tabular-nums; }
+        </style>
+    </head>
+    <body>
+        <h1>Server-Sent Events - Milwad Khosravi</h1>
+        <p id="status">Connecting…</p>
+        <ul id="list"></ul>
+
+        <script>
+            const list = document.getElementById("list");
+            const status = document.getElementById("status");
+
+            // Same-origin relative URL: works regardless of host/port.
+            const eventSrc = new EventSource("/events");
+
+            eventSrc.onopen = () => { status.textContent = "Connected"; };
+
+            eventSrc.onmessage = (event) => {
+                const li = document.createElement("li");
+                li.textContent = event.data;
+                list.prepend(li);
+            };
+
+            // EventSource reconnects automatically; surface the state to the user.
+            eventSrc.onerror = () => {
+                status.textContent = eventSrc.readyState === EventSource.CONNECTING
+                    ? "Reconnecting…"
+                    : "Disconnected";
+            };
+        </script>
+    </body>
+</html>
