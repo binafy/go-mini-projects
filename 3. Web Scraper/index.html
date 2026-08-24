@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>GitHub Profile Scraper</title>
+        <style>
+            :root {
+                --bg: #f6f8fa;
+                --surface: #ffffff;
+                --surface-alt: #f6f8fa;
+                --border: #d1d9e0;
+                --text: #1f2328;
+                --text-muted: #59636e;
+                --accent: #0969da;
+                --accent-hover: #0860ca;
+                --accent-soft: rgba(9, 105, 218, .1);
+                --success: #1a7f37;
+                --radius: 12px;
+                --shadow: 0 1px 3px rgba(31, 35, 40, .08), 0 8px 24px rgba(31, 35, 40, .06);
+            }
+
+            @media (prefers-color-scheme: dark) {
+                :root {
+                    --bg: #0d1117;
+                    --surface: #151b23;
+                    --surface-alt: #1b2129;
+                    --border: #3d444d;
+                    --text: #f0f6fc;
+                    --text-muted: #9198a1;
+                    --accent: #4493f8;
+                    --accent-hover: #6cb0ff;
+                    --accent-soft: rgba(68, 147, 248, .14);
+                    --success: #3fb950;
+                    --shadow: 0 1px 3px rgba(1, 4, 9, .6), 0 8px 24px rgba(1, 4, 9, .4);
+                }
+            }
+
+            * { box-sizing: border-box; }
+
+            body {
+                margin: 0;
+                padding: 2.5rem 1.25rem 4rem;
+                background: var(--bg);
+                color: var(--text);
+                font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+                -webkit-font-smoothing: antialiased;
+            }
+
+            .wrap { max-width: 760px; margin: 0 auto; }
+
+            header { margin-bottom: 1.5rem; }
+
+            h1 {
+                display: flex;
+                align-items: center;
+                gap: .6rem;
+                margin: 0 0 .3rem;
+                font-size: 1.5rem;
+                letter-spacing: -.02em;
+            }
+
+            h1 svg { flex: none; }
+
+            .subtitle { margin: 0; color: var(--text-muted); font-size: .92rem; }
+
+            .card {
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: var(--radius);
+                box-shadow: var(--shadow);
+            }
+
+            /* ---- search form ---- */
+
+            form.scrape {
+                display: flex;
+                gap: .6rem;
+                padding: .8rem;
+                margin-bottom: 1.25rem;
+                flex-wrap: wrap;
+            }
+
+            .combo {
+                display: flex;
+                align-items: center;
+                flex: 1 1 300px;
+                background: var(--surface-alt);
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                overflow: hidden;
+                transition: border-color .15s, box-shadow .15s;
+            }
+
+            .combo:focus-within {
+                border-color: var(--accent);
+                box-shadow: 0 0 0 3px var(--accent-soft);
+            }
+
+            .combo .prefix {
+                padding: .68rem .1rem .68rem .8rem;
+                font-size: .93rem;
+                color: var(--text-muted);
+                white-space: nowrap;
+                user-select: none;
+            }
+
+            .combo input {
+                flex: 1;
+                min-width: 0;
+                padding: .68rem .8rem .68rem .15rem;
+                font: inherit;
+                color: var(--text);
+                background: none;
+                border: 0;
+                outline: none;
+            }
+
+            .combo input::placeholder { color: var(--text-muted); opacity: .75; }
+
+            button {
+                font: inherit;
+                font-weight: 600;
+                cursor: pointer;
+                border-radius: 8px;
+                border: 1px solid transparent;
+                transition: background .15s, color .15s, border-color .15s, opacity .15s;
+            }
+
+            button.primary {
+                padding: .68rem 1.3rem;
+                color: #fff;
+                background: var(--success);
+            }
+
+            button.primary:hover { filter: brightness(1.08); }
+
+            button.primary:disabled { opacity: .6; cursor: progress; }
+
+            .spinner {
+                display: none;
+                width: 13px; height: 13px;
+                margin-right: .5rem;
+                vertical-align: -2px;
+                border: 2px solid currentColor;
+                border-top-color: transparent;
+                border-radius: 50%;
+                animation: spin .7s linear infinite;
+            }
+
+            form.busy .spinner { display: inline-block; }
+
+            @keyframes spin { to { transform: rotate(360deg); } }
+
+            @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2.4s; } }
+
+            /* ---- empty state ---- */
+
+            .empty {
+                padding: 3rem 1.5rem;
+                margin-bottom: 1rem;
+                text-align: center;
+                color: var(--text-muted);
+            }
+
+            .empty svg { margin-bottom: .8rem; color: var(--text-muted); opacity: .5; }
+
+            .empty p {
+                margin: 0 0 .35rem;
+                font-size: 1.02rem;
+                font-weight: 600;
+                color: var(--text);
+            }
+
+            .empty span { font-size: .89rem; }
+
+            .empty strong { color: var(--text); font-weight: 600; }
+
+            /* ---- profile card ---- */
+
+            .profile {
+                display: flex;
+                gap: 1rem;
+                align-items: flex-start;
+                padding: 1.1rem;
+                margin-bottom: 1rem;
+            }
+
+            .avatar {
+                flex: none;
+                width: 72px; height: 72px;
+                border-radius: 50%;
+                background: var(--surface-alt);
+                border: 1px solid var(--border);
+                object-fit: cover;
+            }
+
+            .avatar.placeholder {
+                display: grid;
+                place-items: center;
+                color: var(--text-muted);
+            }
+
+            .identity { min-width: 0; flex: 1; }
+
+            .identity .name {
+                margin: 0;
+                font-size: 1.22rem;
+                font-weight: 600;
+                letter-spacing: -.01em;
+            }
+
+            .identity .handle {
+                display: inline-block;
+                margin: .1rem 0 .5rem;
+                font-size: .95rem;
+                color: var(--text-muted);
+                text-decoration: none;
+            }
+
+            .identity .handle:hover { color: var(--accent); text-decoration: underline; }
+
+            .identity .bio { margin: 0 0 .55rem; }
+
+            .meta {
+                display: flex;
+                flex-wrap: wrap;
+                gap: .3rem 1rem;
+                font-size: .87rem;
+                color: var(--text-muted);
+            }
+
+            .meta span { display: inline-flex; align-items: center; gap: .3rem; }
+
+            .meta svg { flex: none; opacity: .85; }
+
+            .na { color: var(--text-muted); font-style: italic; opacity: .8; }
+
+            /* ---- stat tiles ---- */
+
+            .stats {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: .75rem;
+                margin-bottom: 1rem;
+            }
+
+            .stat {
+                padding: .85rem 1rem;
+                text-align: left;
+            }
+
+            .stat .value {
+                display: block;
+                font-size: 1.45rem;
+                font-weight: 600;
+                letter-spacing: -.02em;
+                font-variant-numeric: tabular-nums;
+            }
+
+            .stat .label {
+                font-size: .78rem;
+                font-weight: 500;
+                letter-spacing: .04em;
+                text-transform: uppercase;
+                color: var(--text-muted);
+            }
+
+            @media (max-width: 520px) {
+                .stats { grid-template-columns: 1fr; }
+                .stat { display: flex; align-items: baseline; gap: .6rem; }
+                .stat .value { font-size: 1.15rem; }
+            }
+
+            /* ---- raw fields ---- */
+
+            .raw-head {
+                display: flex;
+                align-items: center;
+                gap: .6rem;
+                padding: .7rem 1rem;
+                border-bottom: 1px solid var(--border);
+                flex-wrap: wrap;
+            }
+
+            .raw-head h2 {
+                flex: 1 1 auto;
+                margin: 0;
+                font-size: .92rem;
+                font-weight: 600;
+            }
+
+            button.ghost {
+                padding: .35rem .65rem;
+                font-size: .8rem;
+                font-weight: 500;
+                color: var(--text-muted);
+                background: transparent;
+                border-color: var(--border);
+            }
+
+            button.ghost:hover { color: var(--text); border-color: var(--accent); }
+
+            table { width: 100%; border-collapse: collapse; }
+
+            td {
+                padding: .6rem 1rem;
+                border-top: 1px solid var(--border);
+                vertical-align: top;
+                word-break: break-word;
+            }
+
+            tbody tr:first-child td { border-top: 0; }
+
+            td.key {
+                width: 34%;
+                font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+                font-size: .84rem;
+                font-weight: 600;
+                color: var(--accent);
+            }
+
+            td.value a { color: var(--accent); }
+
+            footer {
+                margin-top: 2rem;
+                padding-top: 1.35rem;
+                border-top: 1px solid var(--border);
+                font-size: .82rem;
+                color: var(--text-muted);
+                text-align: center;
+            }
+
+            footer code { font-size: .95em; }
+
+            .credits {
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: .6rem;
+                margin-bottom: .9rem;
+            }
+
+            .credit {
+                display: inline-flex;
+                align-items: center;
+                gap: .55rem;
+                padding: .45rem .8rem;
+                color: var(--text);
+                text-decoration: none;
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: 999px;
+                transition: border-color .15s, transform .15s, box-shadow .15s;
+            }
+
+            .credit:hover {
+                border-color: var(--accent);
+                transform: translateY(-1px);
+                box-shadow: var(--shadow);
+            }
+
+            .credit svg { flex: none; color: var(--text-muted); }
+
+            .credit:hover svg { color: var(--accent); }
+
+            .credit .role {
+                font-size: .68rem;
+                font-weight: 600;
+                letter-spacing: .06em;
+                text-transform: uppercase;
+                color: var(--text-muted);
+            }
+
+            .credit .handle { font-weight: 600; }
+
+            .built { margin: 0; }
+
+            .toast {
+                position: fixed;
+                left: 50%; bottom: 1.5rem;
+                transform: translate(-50%, 1rem);
+                padding: .55rem 1rem;
+                font-size: .85rem;
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: 999px;
+                box-shadow: var(--shadow);
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity .2s, transform .2s;
+            }
+
+            .toast.show { opacity: 1; transform: translate(-50%, 0); }
+        </style>
+    </head>
+    <body>
+        <div class="wrap">
+            <header>
+                <h1>
+                    <svg width="26" height="26" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-2.92-.89-2.92-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2 -.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.15 3.75-2.93 3.95.3.26.56.76.56 1.54 0 1.11-.01 2.02-.01 2.29 0 .21.15.46.55.38A7.995 7.995 0 0 0 16 8c0-4.42-3.58-8-8-8Z"></path>
+                    </svg>
+                    GitHub Profile Scraper
+                </h1>
+                <p class="subtitle">Enter a username and Colly pulls the public profile fields off github.com.</p>
+            </header>
+
+            <form class="scrape card" method="get" action="/" id="scrapeForm">
+                <label class="combo">
+                    <span class="prefix">github.com/</span>
+                    <input type="text" id="userInput" placeholder="milwad-dev" spellcheck="false"
+                           autocapitalize="off" autocomplete="off" required aria-label="GitHub username">
+                </label>
+                <input type="hidden" name="url" id="urlField">
+                <button type="submit" class="primary" id="submitBtn">
+                    <span class="spinner" aria-hidden="true"></span>Scrape profile
+                </button>
+            </form>
+
+            {{if .URL}}
+            <section class="profile card">
+                {{with .Avatar}}
+                <img class="avatar" src="{{.}}" alt="" width="72" height="72" referrerpolicy="no-referrer">
+                {{else}}
+                <div class="avatar placeholder" aria-hidden="true">
+                    <svg width="30" height="30" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm0 1.5c-3 0-5 1.5-5 3V15h10v-1.5c0-1.5-2-3-5-3Z"></path>
+                    </svg>
+                </div>
+                {{end}}
+
+                <div class="identity">
+                    <h2 class="name">{{with .Name}}{{.}}{{else}}<span class="na">name not found</span>{{end}}</h2>
+                    <a class="handle" href="{{.URL}}" rel="noreferrer noopener nofollow" target="_blank" id="profileLink">{{.URL}}</a>
+
+                    <p class="bio">{{with .Bio}}{{.}}{{else}}<span class="na">no bio</span>{{end}}</p>
+
+                    <div class="meta">
+                        <span>
+                            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M8 0a5.53 5.53 0 0 0-5.5 5.5c0 3.5 4.5 9.5 5.5 10.5 1-1 5.5-7 5.5-10.5A5.53 5.53 0 0 0 8 0Zm0 8a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5Z"></path>
+                            </svg>
+                            {{with .Location}}{{.}}{{else}}<span class="na">location not found</span>{{end}}
+                        </span>
+                    </div>
+                </div>
+            </section>
+
+            <div class="stats">
+                <div class="stat card"><span class="value">{{.Followers}}</span><span class="label">Followers</span></div>
+                <div class="stat card"><span class="value">{{.Following}}</span><span class="label">Following</span></div>
+                <div class="stat card"><span class="value">{{.RepositoryCount}}</span><span class="label">Repositories</span></div>
+            </div>
+
+            <section class="card">
+                <div class="raw-head">
+                    <h2>Scraped fields</h2>
+                    <button type="button" class="ghost" id="copyBtn">Copy JSON</button>
+                    <button type="button" class="ghost" id="downloadBtn">Download</button>
+                </div>
+                <table>
+                    <tbody id="resultsBody">
+                    <tr>
+                        <td class="key">url</td>
+                        <td class="value"><a href="{{.URL}}" rel="noreferrer noopener nofollow" target="_blank">{{.URL}}</a></td>
+                    </tr>
+                    <tr>
+                        <td class="key">title</td>
+                        <td class="value">{{with .Title}}{{.}}{{else}}<span class="na">not found</span>{{end}}</td>
+                    </tr>
+                    <tr>
+                        <td class="key">name</td>
+                        <td class="value">{{with .Name}}{{.}}{{else}}<span class="na">not found</span>{{end}}</td>
+                    </tr>
+                    <tr>
+                        <td class="key">bio</td>
+                        <td class="value">{{with .Bio}}{{.}}{{else}}<span class="na">not found</span>{{end}}</td>
+                    </tr>
+                    <tr>
+                        <td class="key">location</td>
+                        <td class="value">{{with .Location}}{{.}}{{else}}<span class="na">not found</span>{{end}}</td>
+                    </tr>
+                    <tr>
+                        <td class="key">followers</td>
+                        <td class="value">{{.Followers}}</td>
+                    </tr>
+                    <tr>
+                        <td class="key">following</td>
+                        <td class="value">{{.Following}}</td>
+                    </tr>
+                    <tr>
+                        <td class="key">repositories</td>
+                        <td class="value">{{.RepositoryCount}}</td>
+                    </tr>
+                    <tr>
+                        <td class="key">avatar</td>
+                        <td class="value">{{with .Avatar}}<a href="{{.}}" rel="noreferrer noopener nofollow" target="_blank">{{.}}</a>{{else}}<span class="na">not found</span>{{end}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </section>
+            {{else}}
+            <section class="empty card">
+                <svg width="34" height="34" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                    <path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.5 4.5 0 1 0-9 0 4.5 4.5 0 0 0 9 0Z"></path>
+                </svg>
+                <p>No profile scraped yet</p>
+                <span>Enter a GitHub username above and hit <strong>Scrape profile</strong> to pull the public fields off github.com.</span>
+            </section>
+            {{end}}
+
+            <footer>
+                <div class="credits">
+                    <a class="credit" href="https://github.com/milwad-dev" rel="noreferrer noopener" target="_blank">
+                        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-2.92-.89-2.92-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2 -.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.15 3.75-2.93 3.95.3.26.56.76.56 1.54 0 1.11-.01 2.02-.01 2.29 0 .21.15.46.55.38A7.995 7.995 0 0 0 16 8c0-4.42-3.58-8-8-8Z"></path></svg>
+                        <span class="role">Author</span>
+                        <span class="handle">Milwad Khosravi</span>
+                    </a>
+                    <a class="credit" href="https://github.com/binafy" rel="noreferrer noopener" target="_blank">
+                        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-2.92-.89-2.92-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2 -.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.15 3.75-2.93 3.95.3.26.56.76.56 1.54 0 1.11-.01 2.02-.01 2.29 0 .21.15.46.55.38A7.995 7.995 0 0 0 16 8c0-4.42-3.58-8-8-8Z"></path></svg>
+                        <span class="role">Organization</span>
+                        <span class="handle">Binafy</span>
+                    </a>
+                </div>
+                <p class="built">Built with ❤️</p>
+            </footer>
+        </div>
+
+        <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+        <script>
+            (function () {
+                var form = document.getElementById('scrapeForm');
+                var userInput = document.getElementById('userInput');
+                var urlField = document.getElementById('urlField');
+                var body = document.getElementById('resultsBody');
+                var toastEl = document.getElementById('toast');
+                var rows = body ? Array.prototype.slice.call(body.querySelectorAll('tr')) : [];
+
+                // Accepts a bare username, a github.com URL, or a pasted "@handle".
+                function toUsername(value) {
+                    var text = value.trim().replace(/^@/, '');
+                    var match = text.match(/github\.com\/([^\/?#\s]+)/i);
+                    if (match) { text = match[1]; }
+                    return text.replace(/^\/+|\/+$/g, '');
+                }
+
+                // Show the scraped profile's username back in the field after reload.
+                var current = new URLSearchParams(window.location.search).get('url');
+                if (current) { userInput.value = toUsername(current); }
+
+                form.addEventListener('submit', function (event) {
+                    var user = toUsername(userInput.value);
+                    if (!user) {
+                        event.preventDefault();
+                        userInput.focus();
+                        return toast('Enter a GitHub username');
+                    }
+                    userInput.value = user;
+                    // main.go reads the "url" query parameter, so build the full URL.
+                    urlField.value = 'https://github.com/' + encodeURIComponent(user);
+                    form.classList.add('busy');
+                    document.getElementById('submitBtn').disabled = true;
+                });
+
+                function collect() {
+                    var out = {};
+                    rows.forEach(function (row) {
+                        var cells = row.getElementsByTagName('td');
+                        out[cells[0].textContent.trim()] = cells[1].textContent.trim();
+                    });
+                    return JSON.stringify(out, null, 2);
+                }
+
+                function toast(message) {
+                    toastEl.textContent = message;
+                    toastEl.classList.add('show');
+                    setTimeout(function () { toastEl.classList.remove('show'); }, 1800);
+                }
+
+                var copyBtn = document.getElementById('copyBtn');
+                if (copyBtn) {
+                    copyBtn.addEventListener('click', function () {
+                        navigator.clipboard.writeText(collect()).then(
+                            function () { toast('Copied as JSON'); },
+                            function () { toast('Copy failed'); }
+                        );
+                    });
+                }
+
+                var downloadBtn = document.getElementById('downloadBtn');
+                if (downloadBtn) {
+                    downloadBtn.addEventListener('click', function () {
+                        var link = document.createElement('a');
+                        link.href = URL.createObjectURL(new Blob([collect()], {type: 'application/json'}));
+                        link.download = 'github-profile.json';
+                        link.click();
+                        URL.revokeObjectURL(link.href);
+                        toast('Downloaded github-profile.json');
+                    });
+                }
+            })();
+        </script>
+    </body>
+</html>
