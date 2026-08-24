@@ -77,7 +77,7 @@ Legend:  ✅ Implemented · 🚧 Planned
 |:--:|:------------------------------------------------------|:---------------------------------------------------|:---------------------------------------------------------|:------:|
 | 1  | [**Text Wrapper**](./1.%20Text%20Wrapper)             | Wraps text to a maximum line width                 | `flag` parsing, word-boundary wrapping                   |   ✅   |
 | 2  | [**QR Code Generator**](./2.%20QR%20Code%20Generator) | Turns any URL into a QR image (`png`/`jpg`/`webp`) | 3rd-party lib, random filenames, format validation       |   ✅   |
-| 3  | Web Scraper                                           | Extract data from web pages                        | —                                                        |   🚧   |
+| 3  | Web Scraper                                           | Extract data from web pages                        | —                                                        |   ✅   |
 | 4  | Credit Validator                                      | Validate card numbers via the Luhn algorithm       | —                                                        |   🚧   |
 | 5  | URL Shortener                                         | Shorten and expand URLs                            | —                                                        |   🚧   |
 | 6  | Empty File Finder                                     | Find zero-byte files in a tree                     | —                                                        |   🚧   |
