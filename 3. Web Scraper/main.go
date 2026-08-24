@@ -79,14 +79,21 @@ func collectDataFromURL(url string) (Data, error) {
 
 	collector.OnHTML("html", func(e *colly.HTMLElement) {
 		data.Title = strings.TrimSpace(e.DOM.Find("title").First().Text())
-		data.Name = strings.TrimSpace(e.DOM.Find("span.p-name").First().Text())
-		data.Bio = strings.TrimSpace(e.DOM.Find("div.p-note").First().Text())
-		data.Location = strings.TrimSpace(e.DOM.Find("span.p-label").First().Text())
-		data.Followers = parseCount(e.DOM.Find("a[href*='tab=followers']").First().Text())
+		data.Name = strings.TrimSpace(e.DOM.Find("span.p-name, h1.h2.lh-condensed").First().Text())
+		data.Bio = strings.TrimSpace(e.DOM.Find("div.p-note, h1.h2.lh-condensed + div.color-fg-muted").First().Text())
+		data.Location = strings.TrimSpace(e.DOM.Find("span.p-label, span[itemprop='location']").First().Text())
+		data.Followers = parseCount(e.DOM.Find("a[href*='tab=followers'], a[href$='/followers']").First().Text())
 		data.Following = parseCount(e.DOM.Find("a[href*='tab=following']").First().Text())
 		data.RepositoryCount = parseCount(e.DOM.Find("a[href*='tab=repositories'] span.Counter").First().Text())
 
-		if src := e.ChildAttr("img.avatar-user", "src"); src != "" {
+		if data.RepositoryCount == 0 {
+			desc := e.DOM.Find("meta[name='description']").AttrOr("content", "")
+			if i := strings.LastIndex(desc, " has "); i >= 0 && strings.Contains(desc, "repositories available") {
+				data.RepositoryCount = parseCount(desc[i:])
+			}
+		}
+
+		if src := e.ChildAttr("img[itemprop='image'], img.avatar-user", "src"); src != "" {
 			data.Avatar = e.Request.AbsoluteURL(src)
 		}
 	})
