@@ -73,25 +73,25 @@ go run main.go -text="Go is fun to learn by building" -width=15
 
 Legend:  ✅ Implemented · 🚧 Planned
 
-| #  | Project                                               | What it does                                       | Highlights                                               | Status |
-|:--:|:------------------------------------------------------|:---------------------------------------------------|:---------------------------------------------------------|:------:|
-| 1  | [**Text Wrapper**](./1.%20Text%20Wrapper)             | Wraps text to a maximum line width                 | `flag` parsing, word-boundary wrapping                   |   ✅   |
-| 2  | [**QR Code Generator**](./2.%20QR%20Code%20Generator) | Turns any URL into a QR image (`png`/`jpg`/`webp`) | 3rd-party lib, random filenames, format validation       |   ✅   |
-| 3  | Web Scraper                                           | Extract data from web pages                        | —                                                        |   ✅   |
-| 4  | Credit Validator                                      | Validate card numbers via the Luhn algorithm       | —                                                        |   🚧   |
-| 5  | URL Shortener                                         | Shorten and expand URLs                            | —                                                        |   🚧   |
-| 6  | [**Empty File Finder**](./6.%20Empty%20File%20Finder) | Find zero-byte files in a tree                     | `filepath.WalkDir`, resilient error handling             |   ✅   |
-| 7  | Empty Directory Finder                                | Find empty directories in a tree                   | —                                                        |   🚧   |
-| 8  | Password Generator                                    | Generate strong, configurable passwords            | —                                                        |   🚧   |
-| 9  | Search String                                         | Grep-like search across files                      | —                                                        |   🚧   |
-| 10 | Watermark Image                                       | Overlay a watermark onto images                    | —                                                        |   🚧   |
-| 11 | Encrypt / Decrypt Text                                | Symmetric text encryption                          | —                                                        |   🚧   |
-| 12 | CLI Todo App                                          | Manage a todo list from the terminal               | —                                                        |   🚧   |
-| 13 | XML → JSON                                            | Convert XML documents to JSON                      | —                                                        |   🚧   |
-| 14 | Tic Tac Toe                                           | Terminal two-player game                           | —                                                        |   🚧   |
-| 15 | [**String Reverse**](./15.%20String%20Reverse)        | Reverse text, whole lines or word order            | Unicode-aware (combining marks), stdin piping, `bufio`   |   ✅   |
-| 16 | [**SSE Server**](./16.%20SSE)                         | Real-time Server-Sent Events over HTTP             | `embed`, `context`, graceful shutdown, live browser demo |   ✅   |
-| 17 | WebSocket                                             | Bidirectional real-time messaging                  | —                                                        |   🚧   |
+| #  | Project                                                         | What it does                                       | Highlights                                               | Status |
+|:--:|:----------------------------------------------------------------|:---------------------------------------------------|:---------------------------------------------------------|:------:|
+| 1  | [**Text Wrapper**](./1.%20Text%20Wrapper)                       | Wraps text to a maximum line width                 | `flag` parsing, word-boundary wrapping                   |   ✅   |
+| 2  | [**QR Code Generator**](./2.%20QR%20Code%20Generator)           | Turns any URL into a QR image (`png`/`jpg`/`webp`) | 3rd-party lib, random filenames, format validation       |   ✅   |
+| 3  | Web Scraper                                                     | Extract data from web pages                        | —                                                        |   ✅   |
+| 4  | Credit Validator                                                | Validate card numbers via the Luhn algorithm       | —                                                        |   🚧   |
+| 5  | URL Shortener                                                   | Shorten and expand URLs                            | —                                                        |   🚧   |
+| 6  | [**Empty File Finder**](./6.%20Empty%20File%20Finder)           | Find zero-byte files in a tree                     | `filepath.WalkDir`, resilient error handling             |   ✅   |
+| 7  | [**Empty Directory Finder**](./7.%20Empty%20Directory%20Finder) | Find empty directories in a tree                   | Recursion, transitively-empty detection                  |   ✅   |
+| 8  | Password Generator                                              | Generate strong, configurable passwords            | —                                                        |   🚧   |
+| 9  | Search String                                                   | Grep-like search across files                      | —                                                        |   🚧   |
+| 10 | Watermark Image                                                 | Overlay a watermark onto images                    | —                                                        |   🚧   |
+| 11 | Encrypt / Decrypt Text                                          | Symmetric text encryption                          | —                                                        |   🚧   |
+| 12 | CLI Todo App                                                    | Manage a todo list from the terminal               | —                                                        |   🚧   |
+| 13 | XML → JSON                                                      | Convert XML documents to JSON                      | —                                                        |   🚧   |
+| 14 | Tic Tac Toe                                                     | Terminal two-player game                           | —                                                        |   🚧   |
+| 15 | [**String Reverse**](./15.%20String%20Reverse)                  | Reverse text, whole lines or word order            | Unicode-aware (combining marks), stdin piping, `bufio`   |   ✅   |
+| 16 | [**SSE Server**](./16.%20SSE)                                   | Real-time Server-Sent Events over HTTP             | `embed`, `context`, graceful shutdown, live browser demo |   ✅   |
+| 17 | WebSocket                                                       | Bidirectional real-time messaging                  | —                                                        |   🚧   |
 
 ### ⭐ Featured
 
@@ -163,6 +163,32 @@ Found 2 empty file(s) in 'testdata'.
 | Flag | Default | Description |
 |------|---------|-------------|
 | `-d` | `.` | The directory to search (scanned recursively) |
+
+</details>
+
+<details>
+<summary><b>7. Empty Directory Finder</b> — empty folders, including the ones hiding empties</summary>
+
+<br/>
+
+Walks a tree and reports directories with nothing in them. With `-nested` it also reports directories that hold nothing but other empty directories — the ones worth pruning even though they are not literally empty. Unreadable directories are reported and skipped, and never counted as empty.
+
+```bash
+cd "7. Empty Directory Finder"
+go run main.go -d testdata
+go run main.go -d testdata -nested
+```
+
+Given `outer/middle/inner` where only `inner` is literally empty, the default run reports just `inner`, while `-nested` reports `inner`, `middle` and `outer`.
+
+**Flags**
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `-d` | `.` | The directory to search (scanned recursively) |
+| `-nested` | `false` | Also report directories holding nothing but empty directories |
+
+> ⚠️ Git cannot track empty directories, so `testdata/emptyFolder` has to be created locally: `mkdir -p "7. Empty Directory Finder/testdata/emptyFolder"`.
 
 </details>
 
@@ -276,6 +302,9 @@ go-mini-projects/
 │   ├── go.mod
 │   └── go.sum
 ├── 6. Empty File Finder/    # ✅ Recursive zero-byte file finder
+│   ├── main.go
+│   └── testdata/
+├── 7. Empty Directory Finder/   # ✅ Recursive empty-directory finder
 │   ├── main.go
 │   └── testdata/
 ├── 15. String Reverse/      # ✅ Unicode-aware string reverser
