@@ -89,7 +89,7 @@ Legend:  ✅ Implemented · 🚧 Planned
 | 12 | CLI Todo App                                          | Manage a todo list from the terminal               | —                                                        |   🚧   |
 | 13 | XML → JSON                                            | Convert XML documents to JSON                      | —                                                        |   🚧   |
 | 14 | Tic Tac Toe                                           | Terminal two-player game                           | —                                                        |   🚧   |
-| 15 | String Reverse                                        | Reverse strings (Unicode-aware)                    | —                                                        |   🚧   |
+| 15 | [**String Reverse**](./15.%20String%20Reverse)        | Reverse text, whole lines or word order            | Unicode-aware (combining marks), stdin piping, `bufio`   |   ✅   |
 | 16 | [**SSE Server**](./16.%20SSE)                         | Real-time Server-Sent Events over HTTP             | `embed`, `context`, graceful shutdown, live browser demo |   ✅   |
 | 17 | WebSocket                                             | Bidirectional real-time messaging                  | —                                                        |   🚧   |
 
@@ -136,6 +136,31 @@ go run main.go -url="https://github.com/binafy/go-mini-projects" -filename="repo
 | `-filename` | _(random)_ | Output file name (without extension) |
 | `-format` | `png` | Output format: `png`, `jpg`, or `webp` |
 | `-fileSize` | `256` | Image size in pixels |
+
+</details>
+
+<details>
+<summary><b>15. String Reverse</b> — reversing text without mangling Unicode</summary>
+
+<br/>
+
+Reverses text from a flag, from arguments, or straight from a pipe. Naive `[]rune` reversal detaches accents from their letters, so characters are reversed together with the combining marks that follow them — `café` comes back as `éfac`, not with a floating accent.
+
+```bash
+cd "15. String Reverse"
+go run main.go -text="Milwad Khosravi"
+go run main.go -words -text="one two three"
+cat notes.txt | go run main.go
+```
+
+Input is read line by line, so piped files keep their line structure — each line is reversed on its own.
+
+**Flags**
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `-text` | _(stdin)_ | The text to reverse; falls back to arguments, then stdin |
+| `-words` | `false` | Reverse the order of the words instead of the characters |
 
 </details>
 
@@ -223,6 +248,8 @@ go-mini-projects/
 │   ├── main.go
 │   ├── go.mod
 │   └── go.sum
+├── 15. String Reverse/      # ✅ Unicode-aware string reverser
+│   └── main.go
 ├── 16. SSE/                 # ✅ Real-time SSE server
 │   ├── main.go
 │   └── index.html
