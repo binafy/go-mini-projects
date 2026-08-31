@@ -80,7 +80,7 @@ Legend:  ✅ Implemented · 🚧 Planned
 | 3  | Web Scraper                                           | Extract data from web pages                        | —                                                        |   ✅   |
 | 4  | Credit Validator                                      | Validate card numbers via the Luhn algorithm       | —                                                        |   🚧   |
 | 5  | URL Shortener                                         | Shorten and expand URLs                            | —                                                        |   🚧   |
-| 6  | Empty File Finder                                     | Find zero-byte files in a tree                     | —                                                        |   🚧   |
+| 6  | [**Empty File Finder**](./6.%20Empty%20File%20Finder) | Find zero-byte files in a tree                     | `filepath.WalkDir`, resilient error handling             |   ✅   |
 | 7  | Empty Directory Finder                                | Find empty directories in a tree                   | —                                                        |   🚧   |
 | 8  | Password Generator                                    | Generate strong, configurable passwords            | —                                                        |   🚧   |
 | 9  | Search String                                         | Grep-like search across files                      | —                                                        |   🚧   |
@@ -136,6 +136,33 @@ go run main.go -url="https://github.com/binafy/go-mini-projects" -filename="repo
 | `-filename` | _(random)_ | Output file name (without extension) |
 | `-format` | `png` | Output format: `png`, `jpg`, or `webp` |
 | `-fileSize` | `256` | Image size in pixels |
+
+</details>
+
+<details>
+<summary><b>6. Empty File Finder</b> — zero-byte files across a whole tree</summary>
+
+<br/>
+
+Walks a directory tree and reports every zero-byte file it finds. Sizes come from the directory entry rather than reading each file, so a huge tree never gets pulled through memory, and a directory it cannot open is reported and skipped instead of ending the scan.
+
+```bash
+cd "6. Empty File Finder"
+go run main.go -d testdata
+```
+
+```text
+The 'testdata/empty.txt' file is empty!
+The 'testdata/milwad/empty2.txt' file is empty!
+
+Found 2 empty file(s) in 'testdata'.
+```
+
+**Flags**
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `-d` | `.` | The directory to search (scanned recursively) |
 
 </details>
 
@@ -248,6 +275,9 @@ go-mini-projects/
 │   ├── main.go
 │   ├── go.mod
 │   └── go.sum
+├── 6. Empty File Finder/    # ✅ Recursive zero-byte file finder
+│   ├── main.go
+│   └── testdata/
 ├── 15. String Reverse/      # ✅ Unicode-aware string reverser
 │   └── main.go
 ├── 16. SSE/                 # ✅ Real-time SSE server
