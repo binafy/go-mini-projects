@@ -79,7 +79,7 @@ Legend:  ✅ Implemented · 🚧 Planned
 | 2    | [**QR Code Generator**](./2.%20QR%20Code%20Generator)             | Turns any URL into a QR image (`png`/`jpg`/`webp`)   | 3rd-party lib, random filenames, format validation         |    ✅     |
 | 3    | Web Scraper                                                       | Extract data from web pages                          | —                                                          |    ✅     |
 | 4    | Credit Validator                                                  | Validate card numbers via the Luhn algorithm         | —                                                          |    🚧     |
-| 5    | URL Shortener                                                     | Shorten and expand URLs                              | —                                                          |    🚧     |
+| 5    | [**URL Shortener**](./5.%20URL%20Shorter)                         | Shorten URLs and expand them back                    | `crypto/rand` IDs, JSON store, atomic file writes          |    ✅     |
 | 6    | [**Empty File Finder**](./6.%20Empty%20File%20Finder)             | Find zero-byte files in a tree                       | `filepath.WalkDir`, resilient error handling               |    ✅     |
 | 7    | [**Empty Directory Finder**](./7.%20Empty%20Directory%20Finder)   | Find empty directories in a tree                     | Recursion, transitively-empty detection                    |    ✅     |
 | 8    | [**Password Generator**](./8.%20Password%20Generator)             | Generate strong, configurable passwords              | `crypto/rand`, guaranteed character classes                |    ✅     |
