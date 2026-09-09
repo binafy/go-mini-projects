@@ -78,7 +78,7 @@ Legend:  ✅ Implemented · 🚧 Planned
 | 1    | [**Text Wrapper**](./1.%20Text%20Wrapper)                         | Wraps text to a maximum line width                   | `flag` parsing, word-boundary wrapping                     |    ✅     |
 | 2    | [**QR Code Generator**](./2.%20QR%20Code%20Generator)             | Turns any URL into a QR image (`png`/`jpg`/`webp`)   | 3rd-party lib, random filenames, format validation         |    ✅     |
 | 3    | Web Scraper                                                       | Extract data from web pages                          | —                                                          |    ✅     |
-| 4    | Credit Validator                                                  | Validate card numbers via the Luhn algorithm         | —                                                          |    🚧     |
+| 4    | [**Credit Validator**](./4.%20Credit%20Validator)                 | Validate card numbers via the Luhn algorithm         | Luhn checksum, network detection, stdin batching           |    ✅     |
 | 5    | [**URL Shortener**](./5.%20URL%20Shorter)                         | Shorten URLs and expand them back                    | `crypto/rand` IDs, JSON store, atomic file writes          |    ✅     |
 | 6    | [**Empty File Finder**](./6.%20Empty%20File%20Finder)             | Find zero-byte files in a tree                       | `filepath.WalkDir`, resilient error handling               |    ✅     |
 | 7    | [**Empty Directory Finder**](./7.%20Empty%20Directory%20Finder)   | Find empty directories in a tree                     | Recursion, transitively-empty detection                    |    ✅     |
@@ -136,6 +136,40 @@ go run main.go -url="https://github.com/binafy/go-mini-projects" -filename="repo
 | `-filename` | _(random)_ | Output file name (without extension) |
 | `-format` | `png` | Output format: `png`, `jpg`, or `webp` |
 | `-fileSize` | `256` | Image size in pixels |
+
+</details>
+
+<details>
+<summary><b>4. Credit Validator</b> — Luhn, in a single pass over the digits</summary>
+
+<br/>
+
+Checks card numbers with the **Luhn algorithm** — the checksum every card in your wallet satisfies — and names the network the number was issued by. Spaces and dashes are stripped first, so a number can be pasted in exactly the way it is printed on the card.
+
+```bash
+cd "4. Credit Validator"
+go run main.go -number="4539 1488 0343 6467"
+go run main.go 4111111111111111 378282246310005
+cat cards.txt | go run main.go
+```
+
+```text
+'4539 1488 0343 6467' is a valid Visa card number.
+'378282246310005' is a valid American Express card number.
+'4111111111111112' is not a valid card number.
+
+Checked 3 card number(s): 2 valid, 1 invalid.
+```
+
+Numbers can arrive three ways — the `-number` flag, arguments, or one per line on stdin — so a whole file of them can be checked in one run. Visa, Mastercard, American Express, Discover, JCB, Diners Club and UnionPay are recognised by their leading digits; anything else still gets validated, just without a network name.
+
+**Flags**
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `-number` | _(arguments, then stdin)_ | The card number to validate |
+
+> A number passing the Luhn check only means it is well-formed — it says nothing about whether the account exists or has funds.
 
 </details>
 
