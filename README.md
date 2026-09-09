@@ -77,7 +77,7 @@ Legend:  ✅ Implemented · 🚧 Planned
 |:----:|:------------------------------------------------------------------|:-----------------------------------------------------|:-----------------------------------------------------------|:--------:|
 | 1    | [**Text Wrapper**](./1.%20Text%20Wrapper)                         | Wraps text to a maximum line width                   | `flag` parsing, word-boundary wrapping                     |    ✅     |
 | 2    | [**QR Code Generator**](./2.%20QR%20Code%20Generator)             | Turns any URL into a QR image (`png`/`jpg`/`webp`)   | 3rd-party lib, random filenames, format validation         |    ✅     |
-| 3    | Web Scraper                                                       | Extract data from web pages                          | —                                                          |    ✅     |
+| 3    | [**Web Scraper**](./3.%20Web%20Scraper)                           | Scrape GitHub profiles from a browser UI             | `gocolly/colly`, `html/template`, CSS selectors            |    ✅     |
 | 4    | [**Credit Validator**](./4.%20Credit%20Validator)                 | Validate card numbers via the Luhn algorithm         | Luhn checksum, network detection, stdin batching           |    ✅     |
 | 5    | [**URL Shortener**](./5.%20URL%20Shorter)                         | Shorten URLs and expand them back                    | `crypto/rand` IDs, JSON store, atomic file writes          |    ✅     |
 | 6    | [**Empty File Finder**](./6.%20Empty%20File%20Finder)             | Find zero-byte files in a tree                       | `filepath.WalkDir`, resilient error handling               |    ✅     |
@@ -136,6 +136,38 @@ go run main.go -url="https://github.com/binafy/go-mini-projects" -filename="repo
 | `-filename` | _(random)_ | Output file name (without extension) |
 | `-format` | `png` | Output format: `png`, `jpg`, or `webp` |
 | `-fileSize` | `256` | Image size in pixels |
+
+</details>
+
+<details>
+<summary><b>3. Web Scraper</b> — a GitHub profile, scraped and rendered</summary>
+
+<br/>
+
+A small web app rather than a CLI. It serves a page on port `8080`, and when you submit a username it fetches that profile from github.com with [`gocolly/colly`](https://github.com/gocolly/colly), pulls the fields out with CSS selectors, and renders them back through `html/template`.
+
+```bash
+cd "3. Web Scraper"
+go run .
+```
+
+Then open **http://localhost:8080** and enter a username. The form accepts a bare handle, an `@handle`, or a full profile URL — the page normalises it to `https://github.com/<user>` before submitting.
+
+**Scraped fields**
+
+| Field | Selector it comes from |
+|-------|------------------------|
+| Title | `<title>` |
+| Name | `span.p-name` |
+| Bio | `div.p-note` |
+| Location | `span.p-label`, `span[itemprop='location']` |
+| Followers / Following | the profile's `tab=followers` and `tab=following` links |
+| Repositories | `tab=repositories` counter, falling back to the `meta[name='description']` text |
+| Avatar | `img[itemprop='image']`, resolved to an absolute URL |
+
+Counts are parsed loosely, so GitHub's `1.2k` shorthand and comma-grouped numbers both come back as plain integers. A missing field is labelled rather than left blank, so it is obvious when a selector has gone stale — GitHub changes its markup often, and keeping up with it is really the point of the exercise.
+
+> Run it from inside the project directory: `index.html` is parsed at startup by relative path.
 
 </details>
 
