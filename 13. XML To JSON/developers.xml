@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+
+<developers>
+    <developer>
+        <id>1</id>
+        <firstname>Milwad</firstname>
+        <lastname>Khosravi</lastname>
+        <username>milwad.dev</username>
+    </developer>
+    <developer>
+        <id>2</id>
+        <firstname>Robert</firstname>
+        <lastname>Griesemer</lastname>
+        <username>griesemer</username>
+    </developer>
+    <developer>
+        <id>3</id>
+        <firstname>Rob</firstname>
+        <lastname>Pike</lastname>
+        <username>robpike</username>
+    </developer>
+    <developer>
+        <id>4</id>
+        <firstname>Ken</firstname>
+        <lastname>Thompson</lastname>
+        <username>ken</username>
+    </developer>
+</developers>

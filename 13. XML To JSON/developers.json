@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "firstName": "Milwad",
+    "lastName": "Khosravi",
+    "userName": "milwad.dev"
+  },
+  {
+    "id": 2,
+    "firstName": "Robert",
+    "lastName": "Griesemer",
+    "userName": "griesemer"
+  },
+  {
+    "id": 3,
+    "firstName": "Rob",
+    "lastName": "Pike",
+    "userName": "robpike"
+  },
+  {
+    "id": 4,
+    "firstName": "Ken",
+    "lastName": "Thompson",
+    "userName": "ken"
+  }
+]

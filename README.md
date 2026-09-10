@@ -87,7 +87,7 @@ Legend:  ✅ Implemented · 🚧 Planned
 | 10   | [**Watermark Image**](./10.%20Watermark%20Image)                  | Overlay a transparent watermark onto a photo         | `image/draw`, alpha compositing, JPEG/PNG codecs           |    ✅     |
 | 11   | [**Encrypt / Decrypt Text**](./11.%20Encrypt%20Decrypt%20Text)     | Encrypt text, then decrypt it back                   | AES-256-GCM, random nonce, base64 output                   |    ✅     |
 | 12   | CLI Todo App                                                      | Manage a todo list from the terminal                 | —                                                          |    🚧     |
-| 13   | XML → JSON                                                        | Convert XML documents to JSON                        | —                                                          |    🚧     |
+| 13   | [**XML → JSON**](./13.%20XML%20To%20JSON)                         | Convert an XML document into JSON                    | One struct, two encodings — `xml` + `json` field tags      |    ✅     |
 | 14   | Tic Tac Toe                                                       | Terminal two-player game                             | —                                                          |    🚧     |
 | 15   | [**String Reverse**](./15.%20String%20Reverse)                    | Reverse text, whole lines or word order              | Unicode-aware (combining marks), stdin piping, `bufio`     |    ✅     |
 | 16   | [**SSE Server**](./16.%20SSE)                                     | Real-time Server-Sent Events over HTTP               | `embed`, `context`, graceful shutdown, live browser demo   |    ✅     |
@@ -374,6 +374,64 @@ The key is a constant in `main.go`, which keeps the demo to a single flag — sw
 </details>
 
 <details>
+<summary><b>13. XML → JSON</b> — one struct, two encodings</summary>
+
+<br/>
+
+Reads a list of developers from XML and writes the same list back out as JSON. The point of the exercise is that **no conversion code is needed**: a single `Developer` struct carries both an `xml:` and a `json:` tag on every field, so `encoding/xml` decodes into it and `encoding/json` encodes straight out of it.
+
+```go
+type Developer struct {
+	XMLName   xml.Name `xml:"developer" json:"-"`
+	ID        int      `xml:"id" json:"id"`
+	FirstName string   `xml:"firstname" json:"firstName"`
+	LastName  string   `xml:"lastname" json:"lastName"`
+	UserName  string   `xml:"username" json:"userName"`
+}
+```
+
+The XML element names stay lowercase the way the document writes them, while the JSON keys come out `camelCase` the way JSON conventionally reads — and `XMLName` is tagged `json:"-"` so the bookkeeping field never reaches the output.
+
+```bash
+cd "13. XML To JSON"
+go run main.go
+go run main.go -in=team.xml -out=team.json -indent=false
+```
+
+```text
+	 ID : 1 - FirstName : Milwad - LastName : Khosravi - UserName : milwad.dev
+	 ID : 2 - FirstName : Robert - LastName : Griesemer - UserName : griesemer
+	 ID : 3 - FirstName : Rob - LastName : Pike - UserName : robpike
+	 ID : 4 - FirstName : Ken - LastName : Thompson - UserName : ken
+
+[
+  {
+    "id": 1,
+    "firstName": "Milwad",
+    "lastName": "Khosravi",
+    "userName": "milwad.dev"
+  },
+  ...
+]
+
+Converted 4 developer(s) from 'developers.xml' to 'developers.json'.
+```
+
+The parsed records are printed in a readable form first, then the JSON is written both to the screen and to the output file.
+
+**Flags**
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `-in` | `developers.xml` | The XML file to read |
+| `-out` | `developers.json` | The JSON file to write |
+| `-indent` | `true` | Pretty-print the JSON; `=false` emits one compact line |
+
+> `encoding/xml` silently ignores elements that do not match a struct tag, so an XML file whose entries are named something other than `<developer>` would parse into an empty list rather than an error. The program checks for that case and stops with a message instead of writing an empty JSON array.
+
+</details>
+
+<details>
 <summary><b>15. String Reverse</b> — reversing text without mangling Unicode</summary>
 
 <br/>
@@ -498,6 +556,9 @@ go-mini-projects/
 │   └── watermark.png
 ├── 11. Encrypt Decrypt Text/    # ✅ AES-256-GCM text encryption
 │   └── main.go
+├── 13. XML To JSON/         # ✅ XML → JSON with dual struct tags
+│   ├── main.go
+│   └── developers.xml
 ├── 15. String Reverse/      # ✅ Unicode-aware string reverser
 │   └── main.go
 ├── 16. SSE/                 # ✅ Real-time SSE server
