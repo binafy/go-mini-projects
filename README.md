@@ -83,7 +83,7 @@ Legend:  ✅ Implemented · 🚧 Planned
 | 6    | [**Empty File Finder**](./6.%20Empty%20File%20Finder)             | Find zero-byte files in a tree                       | `filepath.WalkDir`, resilient error handling               |    ✅     |
 | 7    | [**Empty Directory Finder**](./7.%20Empty%20Directory%20Finder)   | Find empty directories in a tree                     | Recursion, transitively-empty detection                    |    ✅     |
 | 8    | [**Password Generator**](./8.%20Password%20Generator)             | Generate strong, configurable passwords              | `crypto/rand`, guaranteed character classes                |    ✅     |
-| 9    | Search String                                                     | Grep-like search across files                        | —                                                          |    🚧     |
+| 9    | [**Search String**](./9.%20Search%20String)                       | Count word matches in a text and show their offsets  | `regexp`, word boundaries, case-insensitive matching       |    ✅     |
 | 10   | Watermark Image                                                   | Overlay a watermark onto images                      | —                                                          |    🚧     |
 | 11   | [**Encrypt / Decrypt Text**](./11.%20Encrypt%20Decrypt%20Text)     | Encrypt text, then decrypt it back                   | AES-256-GCM, random nonce, base64 output                   |    ✅     |
 | 12   | CLI Todo App                                                      | Manage a todo list from the terminal                 | —                                                          |    🚧     |
@@ -288,6 +288,37 @@ Disable a class with `=false`, e.g. `-symbols=false`. Asking for a length smalle
 </details>
 
 <details>
+<summary><b>9. Search String</b> — every match, with its exact offset</summary>
+
+<br/>
+
+Searches a built-in paragraph about Go for a word and reports where each occurrence sits. The search term is escaped with `regexp.QuoteMeta` and wrapped in `\b` word boundaries, so it is matched as a whole word and never as a fragment of a longer one — searching for `go` finds `Go` and `Go`, but not the `go` inside `Google`. Matching is case-insensitive.
+
+```bash
+cd "9. Search String"
+go run main.go -text="go"
+```
+
+```text
+0 Index: [22:24]
+1 Index: [136:138]
+Text: go
+Repeat count: 2
+```
+
+Each line is one match, printed as the half-open byte range `[start:end)` it occupies in the text — the same slice bounds you would use to cut it back out with `description[start:end]`.
+
+**Flags**
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `-text` | _(required)_ | The word to search for |
+
+> The text being searched is the `description` constant in `main.go`. Edit it to search something else.
+
+</details>
+
+<details>
 <summary><b>11. Encrypt / Decrypt Text</b> — text in, ciphertext and back again</summary>
 
 <br/>
@@ -430,6 +461,8 @@ go-mini-projects/
 │   ├── main.go
 │   └── testdata/
 ├── 8. Password Generator/   # ✅ crypto/rand password generator
+│   └── main.go
+├── 9. Search String/        # ✅ Word search with match offsets
 │   └── main.go
 ├── 11. Encrypt Decrypt Text/    # ✅ AES-256-GCM text encryption
 │   └── main.go
