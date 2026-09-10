@@ -84,7 +84,7 @@ Legend:  ✅ Implemented · 🚧 Planned
 | 7    | [**Empty Directory Finder**](./7.%20Empty%20Directory%20Finder)   | Find empty directories in a tree                     | Recursion, transitively-empty detection                    |    ✅     |
 | 8    | [**Password Generator**](./8.%20Password%20Generator)             | Generate strong, configurable passwords              | `crypto/rand`, guaranteed character classes                |    ✅     |
 | 9    | [**Search String**](./9.%20Search%20String)                       | Count word matches in a text and show their offsets  | `regexp`, word boundaries, case-insensitive matching       |    ✅     |
-| 10   | Watermark Image                                                   | Overlay a watermark onto images                      | —                                                          |    🚧     |
+| 10   | [**Watermark Image**](./10.%20Watermark%20Image)                  | Overlay a transparent watermark onto a photo         | `image/draw`, alpha compositing, JPEG/PNG codecs           |    ✅     |
 | 11   | [**Encrypt / Decrypt Text**](./11.%20Encrypt%20Decrypt%20Text)     | Encrypt text, then decrypt it back                   | AES-256-GCM, random nonce, base64 output                   |    ✅     |
 | 12   | CLI Todo App                                                      | Manage a todo list from the terminal                 | —                                                          |    🚧     |
 | 13   | XML → JSON                                                        | Convert XML documents to JSON                        | —                                                          |    🚧     |
@@ -319,6 +319,34 @@ Each line is one match, printed as the half-open byte range `[start:end)` it occ
 </details>
 
 <details>
+<summary><b>10. Watermark Image</b> — compositing two images with the standard library</summary>
+
+<br/>
+
+Stamps a transparent PNG watermark onto a JPEG photo using nothing but `image`, `image/draw` and the standard codecs — no third-party imaging library. The photo is decoded and copied into a writable `*image.RGBA` with `draw.Src`, then the watermark is composited on top with `draw.Over`, so the PNG's alpha channel is respected and whatever is transparent in the watermark stays see-through.
+
+```bash
+cd "10. Watermark Image"
+go run main.go
+```
+
+The filenames are fixed: it reads `original.jpg` and `watermark.png` from the working directory and writes `watermarked.jpg` next to them, re-encoded as JPEG at quality 90. All three ship with the project, so a plain `go run main.go` produces a result immediately.
+
+**Files**
+
+| File | Role |
+|------|------|
+| `original.jpg` | The base photo to stamp |
+| `watermark.png` | The overlay — transparency comes from its alpha channel |
+| `watermarked.jpg` | The output, JPEG quality 90 (overwritten on each run) |
+
+The watermark is placed by subtracting its size from the photo's, leaving a 20px margin — so with a watermark smaller than the photo it lands neatly in the **bottom-right corner**.
+
+> ⚠️ There is no scaling step. The bundled `watermark.png` is 1536×1024 while `original.jpg` is 1200×675, so the computed corner position is negative and `draw.Draw` clips the overlay against the photo's bounds — the watermark ends up spread across the whole frame with its edges cut off, rather than tucked into the corner. Swap in a watermark smaller than your photo to see the intended corner placement.
+
+</details>
+
+<details>
 <summary><b>11. Encrypt / Decrypt Text</b> — text in, ciphertext and back again</summary>
 
 <br/>
@@ -464,6 +492,10 @@ go-mini-projects/
 │   └── main.go
 ├── 9. Search String/        # ✅ Word search with match offsets
 │   └── main.go
+├── 10. Watermark Image/     # ✅ PNG watermark composited onto a JPEG
+│   ├── main.go
+│   ├── original.jpg
+│   └── watermark.png
 ├── 11. Encrypt Decrypt Text/    # ✅ AES-256-GCM text encryption
 │   └── main.go
 ├── 15. String Reverse/      # ✅ Unicode-aware string reverser
