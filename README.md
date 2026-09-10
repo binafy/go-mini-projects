@@ -85,7 +85,7 @@ Legend:  ✅ Implemented · 🚧 Planned
 | 8    | [**Password Generator**](./8.%20Password%20Generator)             | Generate strong, configurable passwords              | `crypto/rand`, guaranteed character classes                |    ✅     |
 | 9    | Search String                                                     | Grep-like search across files                        | —                                                          |    🚧     |
 | 10   | Watermark Image                                                   | Overlay a watermark onto images                      | —                                                          |    🚧     |
-| 11   | Encrypt / Decrypt Text                                            | Symmetric text encryption                            | —                                                          |    🚧     |
+| 11   | [**Encrypt / Decrypt Text**](./11.%20Encrypt%20Decrypt%20Text)     | Encrypt text, then decrypt it back                   | AES-256-GCM, random nonce, base64 output                   |    ✅     |
 | 12   | CLI Todo App                                                      | Manage a todo list from the terminal                 | —                                                          |    🚧     |
 | 13   | XML → JSON                                                        | Convert XML documents to JSON                        | —                                                          |    🚧     |
 | 14   | Tic Tac Toe                                                       | Terminal two-player game                             | —                                                          |    🚧     |
@@ -288,6 +288,33 @@ Disable a class with `=false`, e.g. `-symbols=false`. Asking for a length smalle
 </details>
 
 <details>
+<summary><b>11. Encrypt / Decrypt Text</b> — text in, ciphertext and back again</summary>
+
+<br/>
+
+Encrypts text with **AES-256-GCM**, prints it base64 encoded, and decrypts it straight back — both directions in one run. Every run uses a fresh random nonce, so the same text never encrypts to the same output twice.
+
+```bash
+cd "11. Encrypt Decrypt Text"
+go run main.go -text="meet me at noon"
+```
+
+```text
+Encrypted: 02VpL3MKu5ub7POYh40y6xyLRErDAzKPnkQZwbDXW5frqqWX0v8Z0LGXUA==
+Decrypted: meet me at noon
+```
+
+**Flags**
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `-text` | _(required)_ | The text to encrypt |
+
+The key is a constant in `main.go`, which keeps the demo to a single flag — swap it for a real secret before encrypting anything you care about.
+
+</details>
+
+<details>
 <summary><b>15. String Reverse</b> — reversing text without mangling Unicode</summary>
 
 <br/>
@@ -403,6 +430,8 @@ go-mini-projects/
 │   ├── main.go
 │   └── testdata/
 ├── 8. Password Generator/   # ✅ crypto/rand password generator
+│   └── main.go
+├── 11. Encrypt Decrypt Text/    # ✅ AES-256-GCM text encryption
 │   └── main.go
 ├── 15. String Reverse/      # ✅ Unicode-aware string reverser
 │   └── main.go
