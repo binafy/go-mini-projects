@@ -88,7 +88,7 @@ Legend:  ✅ Implemented · 🚧 Planned
 | 11   | [**Encrypt / Decrypt Text**](./11.%20Encrypt%20Decrypt%20Text)     | Encrypt text, then decrypt it back                   | AES-256-GCM, random nonce, base64 output                   |    ✅     |
 | 12   | CLI Todo App                                                      | Manage a todo list from the terminal                 | —                                                          |    🚧     |
 | 13   | [**XML → JSON**](./13.%20XML%20To%20JSON)                         | Convert an XML document into JSON                    | One struct, two encodings — `xml` + `json` field tags      |    ✅     |
-| 14   | Tic Tac Toe                                                       | Terminal two-player game                             | —                                                          |    🚧     |
+| 14   | [**Tic Tac Toe**](./14.%20Tic%20Tac%20Toe)                        | Two-player tic tac toe in the terminal               | Win-line table, input validation, `bufio` game loop        |    ✅     |
 | 15   | [**String Reverse**](./15.%20String%20Reverse)                    | Reverse text, whole lines or word order              | Unicode-aware (combining marks), stdin piping, `bufio`     |    ✅     |
 | 16   | [**SSE Server**](./16.%20SSE)                                     | Real-time Server-Sent Events over HTTP               | `embed`, `context`, graceful shutdown, live browser demo   |    ✅     |
 | 17   | WebSocket                                                         | Bidirectional real-time messaging                    | —                                                          |    🚧     |
@@ -432,6 +432,68 @@ The parsed records are printed in a readable form first, then the JSON is writte
 </details>
 
 <details>
+<summary><b>14. Tic Tac Toe</b> — two players, nine cells, eight ways to win</summary>
+
+<br/>
+
+A two-player game for one terminal — take turns, first to a line of three wins. The board is a flat `[9]rune`, so a move is a single number rather than a row and a column, and **empty cells show the number you type to play them**:
+
+```text
+ 1 | 2 | 3
+---+---+---
+ 4 | 5 | 6
+---+---+---
+ 7 | 8 | 9
+```
+
+```bash
+cd "14. Tic Tac Toe"
+go run main.go
+go run main.go -x=Milwad -o=Rob -first=o
+```
+
+```text
+Milwad (X), pick a cell 1-9: 5
+
+ 1 | 2 | 3
+---+---+---
+ 4 | X | 6
+---+---+---
+ 7 | 8 | 9
+
+Rob (O), pick a cell 1-9: 5
+Invalid move: cell 5 is already taken by X
+
+Rob (O), pick a cell 1-9: 1
+```
+
+Winning is checked against a table of the eight lines — three rows, three columns, two diagonals — held as board indices:
+
+```go
+var lines = [8][3]int{
+	{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, // rows
+	{0, 3, 6}, {1, 4, 7}, {2, 5, 8}, // columns
+	{0, 4, 8}, {2, 4, 6},            // diagonals
+}
+```
+
+After each move every line is tested for three equal marks. The check that the first cell is not empty is the one that matters — without it, three untouched cells would read as a win.
+
+A draw is the other ending: no winner **and** no empty cells left. The order is deliberate, since the ninth move can still win the game.
+
+**Flags**
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `-x` | `Player X` | Name of the X player |
+| `-o` | `Player O` | Name of the O player |
+| `-first` | `x` | Which mark moves first: `x` or `o` |
+
+Bad input — not a number, off the board, or a cell already taken — is rejected with the reason and the same player is asked again, so a typo never costs a turn. Closing stdin with `Ctrl+D` abandons the game.
+
+</details>
+
+<details>
 <summary><b>15. String Reverse</b> — reversing text without mangling Unicode</summary>
 
 <br/>
@@ -559,6 +621,8 @@ go-mini-projects/
 ├── 13. XML To JSON/         # ✅ XML → JSON with dual struct tags
 │   ├── main.go
 │   └── developers.xml
+├── 14. Tic Tac Toe/         # ✅ Two-player terminal game
+│   └── main.go
 ├── 15. String Reverse/      # ✅ Unicode-aware string reverser
 │   └── main.go
 ├── 16. SSE/                 # ✅ Real-time SSE server
