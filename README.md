@@ -91,7 +91,7 @@ Legend:  ✅ Implemented · 🚧 Planned
 | 14 | [**Tic Tac Toe**](./14.%20Tic%20Tac%20Toe)                      | Two-player tic tac toe in the terminal              | Win-line table, input validation, `bufio` game loop      |   ✅   |
 | 15 | [**String Reverse**](./15.%20String%20Reverse)                  | Reverse text, whole lines or word order             | Unicode-aware (combining marks), stdin piping, `bufio`   |   ✅   |
 | 16 | [**SSE Server**](./16.%20SSE)                                   | Real-time Server-Sent Events over HTTP              | `embed`, `context`, graceful shutdown, live browser demo |   ✅   |
-| 17 | [**WebSocket**](./17. WebSocket)                                | Bidirectional real-time messaging                   | `gorilla/websocket`                                      |   ✅   |
+| 17 | [**WebSocket**](./17.%20WebSocket)                              | Bidirectional real-time messaging                   | `gorilla/websocket`                                      |   ✅   |
 
 ### ⭐ Featured
 
