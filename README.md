@@ -73,25 +73,25 @@ go run main.go -text="Go is fun to learn by building" -width=15
 
 Legend:  ✅ Implemented · 🚧 Planned
 
-| #    | Project                                                           | What it does                                         | Highlights                                                 | Status   |
-|:----:|:------------------------------------------------------------------|:-----------------------------------------------------|:-----------------------------------------------------------|:--------:|
-| 1    | [**Text Wrapper**](./1.%20Text%20Wrapper)                         | Wraps text to a maximum line width                   | `flag` parsing, word-boundary wrapping                     |    ✅     |
-| 2    | [**QR Code Generator**](./2.%20QR%20Code%20Generator)             | Turns any URL into a QR image (`png`/`jpg`/`webp`)   | 3rd-party lib, random filenames, format validation         |    ✅     |
-| 3    | [**Web Scraper**](./3.%20Web%20Scraper)                           | Scrape GitHub profiles from a browser UI             | `gocolly/colly`, `html/template`, CSS selectors            |    ✅     |
-| 4    | [**Credit Validator**](./4.%20Credit%20Validator)                 | Validate card numbers via the Luhn algorithm         | Luhn checksum, network detection, stdin batching           |    ✅     |
-| 5    | [**URL Shortener**](./5.%20URL%20Shorter)                         | Shorten URLs and expand them back                    | `crypto/rand` IDs, JSON store, atomic file writes          |    ✅     |
-| 6    | [**Empty File Finder**](./6.%20Empty%20File%20Finder)             | Find zero-byte files in a tree                       | `filepath.WalkDir`, resilient error handling               |    ✅     |
-| 7    | [**Empty Directory Finder**](./7.%20Empty%20Directory%20Finder)   | Find empty directories in a tree                     | Recursion, transitively-empty detection                    |    ✅     |
-| 8    | [**Password Generator**](./8.%20Password%20Generator)             | Generate strong, configurable passwords              | `crypto/rand`, guaranteed character classes                |    ✅     |
-| 9    | [**Search String**](./9.%20Search%20String)                       | Count word matches in a text and show their offsets  | `regexp`, word boundaries, case-insensitive matching       |    ✅     |
-| 10   | [**Watermark Image**](./10.%20Watermark%20Image)                  | Overlay a transparent watermark onto a photo         | `image/draw`, alpha compositing, JPEG/PNG codecs           |    ✅     |
-| 11   | [**Encrypt / Decrypt Text**](./11.%20Encrypt%20Decrypt%20Text)     | Encrypt text, then decrypt it back                   | AES-256-GCM, random nonce, base64 output                   |    ✅     |
-| 12   | CLI Todo App                                                      | Manage a todo list from the terminal                 | —                                                          |    🚧     |
-| 13   | [**XML → JSON**](./13.%20XML%20To%20JSON)                         | Convert an XML document into JSON                    | One struct, two encodings — `xml` + `json` field tags      |    ✅     |
-| 14   | [**Tic Tac Toe**](./14.%20Tic%20Tac%20Toe)                        | Two-player tic tac toe in the terminal               | Win-line table, input validation, `bufio` game loop        |    ✅     |
-| 15   | [**String Reverse**](./15.%20String%20Reverse)                    | Reverse text, whole lines or word order              | Unicode-aware (combining marks), stdin piping, `bufio`     |    ✅     |
-| 16   | [**SSE Server**](./16.%20SSE)                                     | Real-time Server-Sent Events over HTTP               | `embed`, `context`, graceful shutdown, live browser demo   |    ✅     |
-| 17   | WebSocket                                                         | Bidirectional real-time messaging                    | —                                                          |    🚧     |
+| #  | Project                                                         | What it does                                        | Highlights                                               | Status |
+|:--:|:----------------------------------------------------------------|:----------------------------------------------------|:---------------------------------------------------------|:------:|
+| 1  | [**Text Wrapper**](./1.%20Text%20Wrapper)                       | Wraps text to a maximum line width                  | `flag` parsing, word-boundary wrapping                   |   ✅   |
+| 2  | [**QR Code Generator**](./2.%20QR%20Code%20Generator)           | Turns any URL into a QR image (`png`/`jpg`/`webp`)  | 3rd-party lib, random filenames, format validation       |   ✅   |
+| 3  | [**Web Scraper**](./3.%20Web%20Scraper)                         | Scrape GitHub profiles from a browser UI            | `gocolly/colly`, `html/template`, CSS selectors          |   ✅   |
+| 4  | [**Credit Validator**](./4.%20Credit%20Validator)               | Validate card numbers via the Luhn algorithm        | Luhn checksum, network detection, stdin batching         |   ✅   |
+| 5  | [**URL Shortener**](./5.%20URL%20Shorter)                       | Shorten URLs and expand them back                   | `crypto/rand` IDs, JSON store, atomic file writes        |   ✅   |
+| 6  | [**Empty File Finder**](./6.%20Empty%20File%20Finder)           | Find zero-byte files in a tree                      | `filepath.WalkDir`, resilient error handling             |   ✅   |
+| 7  | [**Empty Directory Finder**](./7.%20Empty%20Directory%20Finder) | Find empty directories in a tree                    | Recursion, transitively-empty detection                  |   ✅   |
+| 8  | [**Password Generator**](./8.%20Password%20Generator)           | Generate strong, configurable passwords             | `crypto/rand`, guaranteed character classes              |   ✅   |
+| 9  | [**Search String**](./9.%20Search%20String)                     | Count word matches in a text and show their offsets | `regexp`, word boundaries, case-insensitive matching     |   ✅   |
+| 10 | [**Watermark Image**](./10.%20Watermark%20Image)                | Overlay a transparent watermark onto a photo        | `image/draw`, alpha compositing, JPEG/PNG codecs         |   ✅   |
+| 11 | [**Encrypt / Decrypt Text**](./11.%20Encrypt%20Decrypt%20Text)  | Encrypt text, then decrypt it back                  | AES-256-GCM, random nonce, base64 output                 |   ✅   |
+| 12 | CLI Todo App                                                    | Manage a todo list from the terminal                | —                                                        |   🚧   |
+| 13 | [**XML → JSON**](./13.%20XML%20To%20JSON)                       | Convert an XML document into JSON                   | One struct, two encodings — `xml` + `json` field tags    |   ✅   |
+| 14 | [**Tic Tac Toe**](./14.%20Tic%20Tac%20Toe)                      | Two-player tic tac toe in the terminal              | Win-line table, input validation, `bufio` game loop      |   ✅   |
+| 15 | [**String Reverse**](./15.%20String%20Reverse)                  | Reverse text, whole lines or word order             | Unicode-aware (combining marks), stdin piping, `bufio`   |   ✅   |
+| 16 | [**SSE Server**](./16.%20SSE)                                   | Real-time Server-Sent Events over HTTP              | `embed`, `context`, graceful shutdown, live browser demo |   ✅   |
+| 17 | [**WebSocket**](./17. WebSocket)                                | Bidirectional real-time messaging                   | `gorilla/websocket`                                      |   ✅   |
 
 ### ⭐ Featured
 
