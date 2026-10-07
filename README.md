@@ -86,7 +86,7 @@ Legend:  ✅ Implemented · 🚧 Planned
 | 9  | [**Search String**](./9.%20Search%20String)                     | Count word matches in a text and show their offsets | `regexp`, word boundaries, case-insensitive matching     |   ✅   |
 | 10 | [**Watermark Image**](./10.%20Watermark%20Image)                | Overlay a transparent watermark onto a photo        | `image/draw`, alpha compositing, JPEG/PNG codecs         |   ✅   |
 | 11 | [**Encrypt / Decrypt Text**](./11.%20Encrypt%20Decrypt%20Text)  | Encrypt text, then decrypt it back                  | AES-256-GCM, random nonce, base64 output                 |   ✅   |
-| 12 | CLI Todo App                                                    | Manage a todo list from the terminal                | —                                                        |   🚧   |
+| 12 | [**CLI Todo App**](./12.%20CLI%20Todo%20App)                    | Manage a todo list from the terminal                | JSON file persistence, `flag`-driven commands            |   ✅   |
 | 13 | [**XML → JSON**](./13.%20XML%20To%20JSON)                       | Convert an XML document into JSON                   | One struct, two encodings — `xml` + `json` field tags    |   ✅   |
 | 14 | [**Tic Tac Toe**](./14.%20Tic%20Tac%20Toe)                      | Two-player tic tac toe in the terminal              | Win-line table, input validation, `bufio` game loop      |   ✅   |
 | 15 | [**String Reverse**](./15.%20String%20Reverse)                  | Reverse text, whole lines or word order             | Unicode-aware (combining marks), stdin piping, `bufio`   |   ✅   |
@@ -374,6 +374,45 @@ The key is a constant in `main.go`, which keeps the demo to a single flag — sw
 </details>
 
 <details>
+<summary><b>12. CLI Todo App</b> — a todo list that survives between runs</summary>
+
+<br/>
+
+Add, list, complete and delete tasks from the terminal. Each run loads the list from `tasks.json`, applies one command, and writes it back — so the file is the whole database, and you can open it to see exactly what was saved.
+
+```bash
+cd "12. CLI Todo App"
+go run main.go -add="Buy milk" -description="2 liters"
+go run main.go -add="Write README"
+go run main.go -done=1
+go run main.go -list
+```
+
+```text
+Added task #1: Buy milk
+Added task #2: Write README
+Completed task #1: Buy milk
+[x] #1 Buy milk — 2 liters (2026-10-07 16:16)
+[ ] #2 Write README (2026-10-07 16:16)
+```
+
+**Flags**
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `-add` | — | Title of a new task |
+| `-description` | — | Optional description for the task being added |
+| `-list` | `false` | Print every task, `[x]` marking the completed ones |
+| `-done` | — | ID of the task to mark as done |
+| `-delete` | — | ID of the task to remove |
+
+Use one command per run. A new task's ID is one higher than the highest existing ID, so IDs stay short and easy to type.
+
+> `tasks.json` is created in the directory you run the command from, so running from a different folder starts a separate, empty list.
+
+</details>
+
+<details>
 <summary><b>13. XML → JSON</b> — one struct, two encodings</summary>
 
 <br/>
@@ -617,6 +656,8 @@ go-mini-projects/
 │   ├── original.jpg
 │   └── watermark.png
 ├── 11. Encrypt Decrypt Text/    # ✅ AES-256-GCM text encryption
+│   └── main.go
+├── 12. CLI Todo App/        # ✅ Todo list persisted to JSON
 │   └── main.go
 ├── 13. XML To JSON/         # ✅ XML → JSON with dual struct tags
 │   ├── main.go
